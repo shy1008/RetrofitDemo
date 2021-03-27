@@ -1,5 +1,3 @@
-# RetrofitDemo
-
 ## Retrofit with Kotlin
 
 - Rest API
