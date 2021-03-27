@@ -12,26 +12,21 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var textView: TextView
+    private lateinit var retService: AlbumService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         textView = findViewById(R.id.textView)
 
-        val retService: AlbumService =
-            RetrofitInstance.getRetrofitInstance().create(AlbumService::class.java)
+        retService = RetrofitInstance.getRetrofitInstance().create(AlbumService::class.java)
 
-        //path parameter example
-        val pathResponse: LiveData<Response<AlbumItem>> = liveData {
-            val response = retService.getAlbums(3)
-            emit(response)
-        }
+//        getRequestWithPathParameters()
+        getRequestWithQueryParameters()
 
-        pathResponse.observe(this, Observer {
-            val title = it.body()?.title
-            Toast.makeText(applicationContext,title,Toast.LENGTH_SHORT).show()
-        })
+    }
 
+    private fun getRequestWithQueryParameters() {
         val responseLiveData: LiveData<Response<Album>> = liveData {
             val response: Response<Album> = retService.getSortedAlbums(3)
             emit(response)
@@ -49,7 +44,19 @@ class MainActivity : AppCompatActivity() {
 //                    Log.i("TAG", "${albumsItem.title}")
                 }
             }
+        })
+    }
 
+    private fun getRequestWithPathParameters() {
+        //path parameter example
+        val pathResponse: LiveData<Response<AlbumItem>> = liveData {
+            val response = retService.getAlbums(3)
+            emit(response)
+        }
+
+        pathResponse.observe(this, Observer {
+            val title = it.body()?.title
+            Toast.makeText(applicationContext, title, Toast.LENGTH_SHORT).show()
         })
     }
 }
