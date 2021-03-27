@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.liveData
@@ -19,6 +20,17 @@ class MainActivity : AppCompatActivity() {
 
         val retService: AlbumService =
             RetrofitInstance.getRetrofitInstance().create(AlbumService::class.java)
+
+        //path parameter example
+        val pathResponse: LiveData<Response<AlbumItem>> = liveData {
+            val response = retService.getAlbums(3)
+            emit(response)
+        }
+
+        pathResponse.observe(this, Observer {
+            val title = it.body()?.title
+            Toast.makeText(applicationContext,title,Toast.LENGTH_SHORT).show()
+        })
 
         val responseLiveData: LiveData<Response<Album>> = liveData {
             val response: Response<Album> = retService.getSortedAlbums(3)
